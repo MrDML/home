@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package captcha.service.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "api/captcha/service/v1;v1";
+
+
+service Captcha {
+  rpc GetCaptcha(GetCaptchaReq) returns (GetCaptchaReply) {}
+}
+
+message GetCaptchaReq {
+  string uuid = 1;
+}
+
+message  GetCaptchaReply {
+  // 使用切片存储图片信息， 用json 序列化
+  bytes img = 1;
+}
