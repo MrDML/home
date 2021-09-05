@@ -18,6 +18,7 @@ func NewCaptchaRepo(data *Data, logger log.Logger) biz.CaptchaRepo {
 
 func (r *captchaRepo)GetCaptcha(ctx context.Context, uuid string)  (img []byte, err error) {
 
+	// 调用远程方法 call
 	reply, err := r.data.cc.GetCaptcha(ctx, &v1.GetCaptchaReq{
 		Uuid: uuid,
 	})

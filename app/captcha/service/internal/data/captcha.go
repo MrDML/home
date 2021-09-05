@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"home/app/captcha/service/internal/biz"
 	"image/color"
+	"time"
 )
 
 type captchaRepo struct {
@@ -36,7 +37,17 @@ func (r *captchaRepo) GetCaptcha(ctx context.Context, uuid string)  (img []byte,
 	// 设置背景色 可以多个 随机替换背景色 默认是白色
 	cap.SetBkgColor(color.RGBA{0, 128, 128, 128}, color.RGBA{255, 0, 0, 128})
 
-	image, _ := cap.Create(6, captcha.ALL)
+	image, code := cap.Create(6, captcha.ALL)
+
+	if code != "" {
+		// 将code存入redis
+		var key = "imageCode:" + uuid
+		set, err := r.data.rdb.SetEX(ctx, key, code, 60 * time.Second).Result()
+		if err != nil {
+			panic(err)
+		}
+		r.log.Infof("======>save image code :%s", set)
+	}
 
 	// 序列化
 	imgBytes, errMarshal :=  json.Marshal(image)

@@ -77,6 +77,9 @@ func addRoute(router *gin.Engine, captchaService *service.CaptchaService) {
 		v1.GET("/session", userController.GetSession)
 		// 获取验证码图片服务
 		v1.GET("/imagecode/:uuid", userController.GetImageCd)
+		// 获取短信验证码服务
+		v1.GET("/smscode/:mobile", userController.GetSmscd)
+
 	}
 }
 

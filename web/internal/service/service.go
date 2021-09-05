@@ -17,6 +17,8 @@ type CaptchaService struct {
 	log *log.Helper
 }
 
+
+
 func NewCaptchaService(uc *biz.CaptchaUseCase, logger log.Logger) *CaptchaService {
 	return &CaptchaService{uc: uc, log: log.NewHelper(logger)}
 }
