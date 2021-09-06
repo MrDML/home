@@ -5,6 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	v1 "home/api/captcha/service/v1"
+	e "home/web/exception"
 	"home/web/internal/conf"
 	"home/web/internal/service"
 )
@@ -13,7 +14,7 @@ import (
 func NewGRPCServer(c *conf.Server, captcha *service.CaptchaService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
-			recovery.Recovery(),
+			recovery.Recovery(recovery.WithHandler(e.Exception)),
 		),
 	}
 	if c.Grpc.Network != "" {

@@ -10,7 +10,12 @@ type Captcha struct {
 }
 
 type CaptchaRepo interface {
+
+	// GetCaptcha 获取验证码
 	GetCaptcha(ctx context.Context, uuid string) (img []byte, err error)
+
+	// GetImageCodeFromRdb 从redis获取验证码
+	GetImageCodeFromRdb(ctx context.Context, uuid string, imgCode *string) error
 
 }
 
@@ -25,4 +30,8 @@ func NewCaptchaUseCase(repo CaptchaRepo, logger log.Logger) *CaptchaUseCase{
 
 func (us *CaptchaUseCase) GetCaptcha(ctx context.Context, uuid string) (img []byte, err error) {
 	return us.repo.GetCaptcha(ctx ,uuid)
+}
+
+func (us *CaptchaUseCase) GetImageCodeFromRdb(ctx context.Context, uuid string, imgCode *string) error {
+	return us.repo.GetImageCodeFromRdb(ctx, uuid, imgCode)
 }

@@ -13,14 +13,14 @@ var ProviderSet = wire.NewSet(NewCaptchaService)
 type CaptchaService struct {
 	v1.UnimplementedCaptchaServer
 
-	uc  *biz.CaptchaUseCase
+	cc  *biz.CaptchaUseCase
 	log *log.Helper
 }
 
 
 
-func NewCaptchaService(uc *biz.CaptchaUseCase, logger log.Logger) *CaptchaService {
-	return &CaptchaService{uc: uc, log: log.NewHelper(logger)}
+func NewCaptchaService(cc *biz.CaptchaUseCase, logger log.Logger) *CaptchaService {
+	return &CaptchaService{cc: cc, log: log.NewHelper(logger)}
 }
 
 

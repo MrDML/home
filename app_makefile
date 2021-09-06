@@ -18,8 +18,8 @@ init:
 #	go get -u github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
 #	go get -u github.com/go-kratos/gin
 #	go get -u github.com/gin-gonic/gin
-#	go get github.com/afocus/captcha
-#	go get github.com/go-redis/redis/v8
+	go get github.com/afocus/captcha
+	go get github.com/go-redis/redis/v8
 	# 短信核心库
 	go get -u github.com/aliyun/alibaba-cloud-sdk-go/sdk
 	# 短信API

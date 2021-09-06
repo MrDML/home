@@ -18,7 +18,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CaptchaClient interface {
+	// 获取验证码
 	GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*GetCaptchaReply, error)
+	// 从redis 中获取验证码
+	GetImageCodeFromRdb(ctx context.Context, in *GetImageCodeFromRdbReq, opts ...grpc.CallOption) (*GetImageCodeFromRdbReply, error)
 }
 
 type captchaClient struct {
@@ -38,11 +41,23 @@ func (c *captchaClient) GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts 
 	return out, nil
 }
 
+func (c *captchaClient) GetImageCodeFromRdb(ctx context.Context, in *GetImageCodeFromRdbReq, opts ...grpc.CallOption) (*GetImageCodeFromRdbReply, error) {
+	out := new(GetImageCodeFromRdbReply)
+	err := c.cc.Invoke(ctx, "/captcha.service.v1.Captcha/GetImageCodeFromRdb", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CaptchaServer is the server API for Captcha service.
 // All implementations must embed UnimplementedCaptchaServer
 // for forward compatibility
 type CaptchaServer interface {
+	// 获取验证码
 	GetCaptcha(context.Context, *GetCaptchaReq) (*GetCaptchaReply, error)
+	// 从redis 中获取验证码
+	GetImageCodeFromRdb(context.Context, *GetImageCodeFromRdbReq) (*GetImageCodeFromRdbReply, error)
 	mustEmbedUnimplementedCaptchaServer()
 }
 
@@ -52,6 +67,9 @@ type UnimplementedCaptchaServer struct {
 
 func (UnimplementedCaptchaServer) GetCaptcha(context.Context, *GetCaptchaReq) (*GetCaptchaReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCaptcha not implemented")
+}
+func (UnimplementedCaptchaServer) GetImageCodeFromRdb(context.Context, *GetImageCodeFromRdbReq) (*GetImageCodeFromRdbReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetImageCodeFromRdb not implemented")
 }
 func (UnimplementedCaptchaServer) mustEmbedUnimplementedCaptchaServer() {}
 
@@ -84,6 +102,24 @@ func _Captcha_GetCaptcha_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Captcha_GetImageCodeFromRdb_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetImageCodeFromRdbReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CaptchaServer).GetImageCodeFromRdb(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/captcha.service.v1.Captcha/GetImageCodeFromRdb",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CaptchaServer).GetImageCodeFromRdb(ctx, req.(*GetImageCodeFromRdbReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Captcha_ServiceDesc is the grpc.ServiceDesc for Captcha service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -94,6 +130,10 @@ var Captcha_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCaptcha",
 			Handler:    _Captcha_GetCaptcha_Handler,
+		},
+		{
+			MethodName: "GetImageCodeFromRdb",
+			Handler:    _Captcha_GetImageCodeFromRdb_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

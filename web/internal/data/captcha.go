@@ -29,3 +29,16 @@ func (r *captchaRepo)GetCaptcha(ctx context.Context, uuid string)  (img []byte, 
 
 	return imgBytes, nil
 }
+
+func (r *captchaRepo) GetImageCodeFromRdb(ctx context.Context, uuid string, imgCode *string) error {
+	// 调用远程方法 call
+	reply, err := r.data.cc.GetImageCodeFromRdb(ctx, &v1.GetImageCodeFromRdbReq{
+		Uuid: uuid,
+	})
+	if err != nil {
+		r.log.Fatal("call remote GetImageCodeFromRdb err = ",err)
+	}
+	// 给验证码赋值
+	*imgCode = reply.GetImgCode()
+	return err
+}

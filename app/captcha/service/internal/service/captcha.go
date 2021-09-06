@@ -19,3 +19,9 @@ func (s *CaptchaService) GetCaptcha(ctx context.Context, req *v1.GetCaptchaReq) 
 
 	return reply,err
 }
+
+
+func (s *CaptchaService) GetImageCodeFromRdb(ctx context.Context, req *v1.GetImageCodeFromRdbReq) (* v1.GetImageCodeFromRdbReply, error) {
+
+	return nil, nil
+}

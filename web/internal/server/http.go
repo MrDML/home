@@ -12,17 +12,20 @@ import (
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"home/web/controller"
+	e "home/web/exception"
 	"home/web/internal/conf"
 	"home/web/internal/service"
 	"reflect"
 	"time"
 )
 
+
+
 // NewHTTPServer new a HTTP server.
 func NewHTTPServer(c *conf.Server, captcha *service.CaptchaService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
-			recovery.Recovery(),
+			recovery.Recovery(recovery.WithHandler(e.Exception)),
 		),
 	}
 	if c.Http.Network != "" {
@@ -34,13 +37,16 @@ func NewHTTPServer(c *conf.Server, captcha *service.CaptchaService, logger log.L
 	if c.Http.Timeout != nil {
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
+
+
+
 	//srv := http.NewServer(opts...)
 	//v1.RegisterGreeterHTTPServer(srv, greeter)
 
 	router := gin.Default()
 
 	// 使用中间件
-	router.Use(kgin.Middlewares(recovery.Recovery(), customMiddleware))
+	router.Use(kgin.Middlewares(recovery.Recovery(recovery.WithHandler(e.Exception)), customMiddleware))
 
 	// 加载web
 	router.Static("/home", "web/view")
