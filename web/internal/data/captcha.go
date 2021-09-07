@@ -23,7 +23,7 @@ func (r *captchaRepo)GetCaptcha(ctx context.Context, uuid string)  (img []byte, 
 		Uuid: uuid,
 	})
 	if err != nil {
-		panic(err)
+		return nil,err
 	}
     imgBytes := reply.GetImg()
 
@@ -37,8 +37,20 @@ func (r *captchaRepo) GetImageCodeFromRdb(ctx context.Context, uuid string, imgC
 	})
 	if err != nil {
 		r.log.Fatal("call remote GetImageCodeFromRdb err = ",err)
+		return err
 	}
 	// 给验证码赋值
 	*imgCode = reply.GetImgCode()
-	return err
+	return nil
+}
+
+func (r *captchaRepo) SendSmsCode(ctx context.Context, mobile string) error {
+	_, err := r.data.cc.SendSmsCode(ctx, &v1.SendSmsCodeReq{
+		Phone: mobile,
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
 }

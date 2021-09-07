@@ -15,8 +15,10 @@ func (s *CaptchaService) GetImageCodeFromRedis(ctx context.Context, uuid string,
 	return err
 }
 
-func (s *CaptchaService) SendSmsCode(ctx context.Context, code string) error {
-
-	return nil
+func (s *CaptchaService) SendSmsCodeFromCaseInData(ctx context.Context, phone string) error {
+	 err := s.cc.SendSmsCode(ctx, phone)
+	return err
 }
+
+
 

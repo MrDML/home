@@ -17,6 +17,9 @@ type CaptchaRepo interface {
 	// GetImageCodeFromRdb 从redis获取验证码
 	GetImageCodeFromRdb(ctx context.Context, uuid string, imgCode *string) error
 
+	// SendSmsCode 发送短信验证码
+	SendSmsCode(ctx context.Context, phone string) error
+
 }
 
 type CaptchaUseCase struct {
@@ -34,4 +37,8 @@ func (us *CaptchaUseCase) GetCaptcha(ctx context.Context, uuid string) (img []by
 
 func (us *CaptchaUseCase) GetImageCodeFromRdb(ctx context.Context, uuid string, imgCode *string) error {
 	return us.repo.GetImageCodeFromRdb(ctx, uuid, imgCode)
+}
+
+func (us *CaptchaUseCase) SendSmsCode(ctx context.Context, phone string) error  {
+	return us.repo.SendSmsCode(ctx, phone)
 }

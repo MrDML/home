@@ -95,7 +95,7 @@ func (c *UserController) GetSmscd(ctx *gin.Context) {
 	}
 
 	// 调用远程服务发送短信
-	c.captchaService.SendSmsCode(ctx, imgCode)
+	c.captchaService.SendSmsCode(ctx, mobile)
 
 	// 成功
 	ctx.JSON(http.StatusOK, utils.OK(nil))

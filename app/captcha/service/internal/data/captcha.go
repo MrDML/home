@@ -3,9 +3,11 @@ package data
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/afocus/captcha"
 	"github.com/go-kratos/kratos/v2/log"
 	"home/app/captcha/service/internal/biz"
+	"home/app/captcha/service/util"
 	"image/color"
 	"time"
 )
@@ -60,5 +62,28 @@ func (r*captchaRepo) GetImageCodeFromRdb(ctx context.Context, uuid string) (stri
 	imageCode, err := r.data.rdb.Get(ctx, uuid).Result()
 	return imageCode, err
 }
+
+
+// SendSmsCode 发送短信验证码
+func (r*captchaRepo) SendSmsCode(ctx context.Context, phone string) error {
+
+	code := util.GetRandNumber(6)
+	// TODO 发送短信
+	// 存入redis
+	key := "SmsCode:" + phone
+	if _, err := r.data.rdb.SetEX(ctx, key, code, time.Second * 120).Result(); err != nil{
+		return err
+	}
+	fmt.Println("短信验证码为: ", code)
+	return nil
+}
+
+// GetSmsCode 获取短信验证码
+func (r*captchaRepo) GetSmsCode(ctx context.Context, phone string) (string, error) {
+
+	return "", nil
+}
+
+
 
 

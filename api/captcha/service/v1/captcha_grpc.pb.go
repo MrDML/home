@@ -18,10 +18,14 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CaptchaClient interface {
-	// 获取验证码
+	// 获取图片验证码
 	GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*GetCaptchaReply, error)
-	// 从redis 中获取验证码
+	// 从redis中获取图片验证码
 	GetImageCodeFromRdb(ctx context.Context, in *GetImageCodeFromRdbReq, opts ...grpc.CallOption) (*GetImageCodeFromRdbReply, error)
+	// 发送短信验证码
+	SendSmsCode(ctx context.Context, in *SendSmsCodeReq, opts ...grpc.CallOption) (*SendSmsCodeReply, error)
+	// 获取短信验证码
+	GetSmsCode(ctx context.Context, in *GetSmsCodeReq, opts ...grpc.CallOption) (*GetSmsCodeReply, error)
 }
 
 type captchaClient struct {
@@ -50,14 +54,36 @@ func (c *captchaClient) GetImageCodeFromRdb(ctx context.Context, in *GetImageCod
 	return out, nil
 }
 
+func (c *captchaClient) SendSmsCode(ctx context.Context, in *SendSmsCodeReq, opts ...grpc.CallOption) (*SendSmsCodeReply, error) {
+	out := new(SendSmsCodeReply)
+	err := c.cc.Invoke(ctx, "/captcha.service.v1.Captcha/SendSmsCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *captchaClient) GetSmsCode(ctx context.Context, in *GetSmsCodeReq, opts ...grpc.CallOption) (*GetSmsCodeReply, error) {
+	out := new(GetSmsCodeReply)
+	err := c.cc.Invoke(ctx, "/captcha.service.v1.Captcha/GetSmsCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CaptchaServer is the server API for Captcha service.
 // All implementations must embed UnimplementedCaptchaServer
 // for forward compatibility
 type CaptchaServer interface {
-	// 获取验证码
+	// 获取图片验证码
 	GetCaptcha(context.Context, *GetCaptchaReq) (*GetCaptchaReply, error)
-	// 从redis 中获取验证码
+	// 从redis中获取图片验证码
 	GetImageCodeFromRdb(context.Context, *GetImageCodeFromRdbReq) (*GetImageCodeFromRdbReply, error)
+	// 发送短信验证码
+	SendSmsCode(context.Context, *SendSmsCodeReq) (*SendSmsCodeReply, error)
+	// 获取短信验证码
+	GetSmsCode(context.Context, *GetSmsCodeReq) (*GetSmsCodeReply, error)
 	mustEmbedUnimplementedCaptchaServer()
 }
 
@@ -70,6 +96,12 @@ func (UnimplementedCaptchaServer) GetCaptcha(context.Context, *GetCaptchaReq) (*
 }
 func (UnimplementedCaptchaServer) GetImageCodeFromRdb(context.Context, *GetImageCodeFromRdbReq) (*GetImageCodeFromRdbReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetImageCodeFromRdb not implemented")
+}
+func (UnimplementedCaptchaServer) SendSmsCode(context.Context, *SendSmsCodeReq) (*SendSmsCodeReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendSmsCode not implemented")
+}
+func (UnimplementedCaptchaServer) GetSmsCode(context.Context, *GetSmsCodeReq) (*GetSmsCodeReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSmsCode not implemented")
 }
 func (UnimplementedCaptchaServer) mustEmbedUnimplementedCaptchaServer() {}
 
@@ -120,6 +152,42 @@ func _Captcha_GetImageCodeFromRdb_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Captcha_SendSmsCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendSmsCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CaptchaServer).SendSmsCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/captcha.service.v1.Captcha/SendSmsCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CaptchaServer).SendSmsCode(ctx, req.(*SendSmsCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Captcha_GetSmsCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSmsCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CaptchaServer).GetSmsCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/captcha.service.v1.Captcha/GetSmsCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CaptchaServer).GetSmsCode(ctx, req.(*GetSmsCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Captcha_ServiceDesc is the grpc.ServiceDesc for Captcha service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +202,14 @@ var Captcha_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetImageCodeFromRdb",
 			Handler:    _Captcha_GetImageCodeFromRdb_Handler,
+		},
+		{
+			MethodName: "SendSmsCode",
+			Handler:    _Captcha_SendSmsCode_Handler,
+		},
+		{
+			MethodName: "GetSmsCode",
+			Handler:    _Captcha_GetSmsCode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

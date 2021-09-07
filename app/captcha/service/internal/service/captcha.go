@@ -27,3 +27,23 @@ func (s *CaptchaService) GetImageCodeFromRdb(ctx context.Context, req *v1.GetIma
 	}
 	return reply, err
 }
+
+
+// SendSmsCode 发送短信验证码
+func (s *CaptchaService) SendSmsCode(ctx context.Context, req *v1.SendSmsCodeReq) (*v1.SendSmsCodeReply, error) {
+	 err := s.uc.SendSmsCode(ctx, req.GetPhone())
+	 return nil, err
+}
+// GetSmsCode 获取短信验证码
+func (s *CaptchaService) GetSmsCode(ctx context.Context, req *v1.GetSmsCodeReq) (*v1.GetSmsCodeReply, error) {
+
+	 smsCode, err := s.uc.GetSmsCode(ctx, req.GetPhone())
+	if err != nil {
+		return nil, err
+	}
+	 reply := &v1.GetSmsCodeReply{
+	 	Code: smsCode,
+	 }
+	 return reply, nil
+
+}
