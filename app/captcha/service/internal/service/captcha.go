@@ -12,16 +12,18 @@ func (s *CaptchaService) GetCaptcha(ctx context.Context, req *v1.GetCaptchaReq) 
 
 	// 业务逻辑处理
 	imgBytes, err :=  s.uc.GetCaptcha(ctx,req.Uuid)
-
 	reply = &v1.GetCaptchaReply {
 		Img: imgBytes,
 	}
-
 	return reply,err
 }
 
 
-func (s *CaptchaService) GetImageCodeFromRdb(ctx context.Context, req *v1.GetImageCodeFromRdbReq) (* v1.GetImageCodeFromRdbReply, error) {
+func (s *CaptchaService) GetImageCodeFromRdb(ctx context.Context, req *v1.GetImageCodeFromRdbReq) (reply * v1.GetImageCodeFromRdbReply, err error) {
 
-	return nil, nil
+	code, err := s.uc.GetImageCodeFromRdb(ctx, req.Uuid)
+	reply = &v1.GetImageCodeFromRdbReply{
+		ImgCode: code,
+	}
+	return reply, err
 }

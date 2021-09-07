@@ -19,8 +19,6 @@ func Exception(ctx context.Context, req, err interface{}) error {
 	//val := cb.Value(struct{}{}).(int)
 	//
 	//fmt.Println(val)
-
-
 	fmt.Println("===捕获到全局的异常===")
 	// FromGinContext
 	c, _ := gin.FromGinContext(ctx)

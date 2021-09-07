@@ -54,3 +54,11 @@ func (r *captchaRepo) GetCaptcha(ctx context.Context, uuid string)  (img []byte,
 
 	return imgBytes, errMarshal
 }
+
+
+func (r*captchaRepo) GetImageCodeFromRdb(ctx context.Context, uuid string) (string, error) {
+	imageCode, err := r.data.rdb.Get(ctx, uuid).Result()
+	return imageCode, err
+}
+
+
